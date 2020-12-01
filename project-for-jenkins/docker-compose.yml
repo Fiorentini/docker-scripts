@@ -1,0 +1,21 @@
+
+version: "3.5"
+
+services:
+  K-Website:
+    image: website
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+    container_name: K-Website
+    restart: on-failure
+    expose:
+      - "80"
+    ports:
+      - "4545:80"
+    networks:
+      K-Net:
+      
+networks:
+  K-Net:
+    name: K-Net
+    driver: bridge
