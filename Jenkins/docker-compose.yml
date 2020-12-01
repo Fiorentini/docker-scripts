@@ -1,16 +1,23 @@
 version: '3.4'
 
 services:
-  project-for-jenkins-website:
+  jenkins-test:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ${DOCKER_REGISTRY-}projectforjenkinswebsite
-    environment:
-      - ASPNETCORE_URLS=http://+:80
-    container_name: testapi
+    image: ${DOCKER_REGISTRY-}jenkins-test
+    container_name: jenkins-test
+    user: root
     restart: on-failure
-    expose:
-      - "80"
     ports:
-      - "1234:80"
+      - "1234:8080"
+      - "4321:50000"
+    volumes:
+       - /var/run/docker.sock:/var/run/docker.sock  
+    networks:
+      K-Net:
+      
+networks:
+  K-Net:
+    name: K-Net
+    driver: bridge
