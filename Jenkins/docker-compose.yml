@@ -1,23 +1,36 @@
 version: '3.4'
 
 services:
-  jenkins-test:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: ${DOCKER_REGISTRY-}jenkins-test
-    container_name: jenkins-test
-    user: root
-    restart: on-failure
-    ports:
-      - "1234:8080"
-      - "4321:50000"
-    volumes:
-       - /var/run/docker.sock:/var/run/docker.sock  
-    networks:
-      K-Net:
-      
+  K-Socat:
+        image: alpine/socat
+        command: tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
+        container_name: K-Socat
+        restart: on-failure
+        ports:
+           - "127.0.0.1:2376:2375"
+        volumes:
+           - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+          K-Net:
+  K-Jenkins:
+        build:
+          context: .
+          dockerfile: Dockerfile
+        image: ${DOCKER_REGISTRY-}jenkins/jenkins
+        container_name: K-Jenkins
+        user: root
+        restart: on-failure
+        ports:
+           - "2222:8080"
+           - "50000:50000"
+        volumes:
+           - /var/run/docker.sock:/var/run/docker.sock  
+        networks:
+           - K-Net
+        depends_on:
+           - K-Socat
+          
 networks:
-  K-Net:
-    name: K-Net
-    driver: bridge
+      K-Net:
+        name: K-Net
+        driver: bridge
