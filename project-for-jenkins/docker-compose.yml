@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   K-Website:
-    image: website
+    image: kalebifiorentini/project-for-jenkins
     environment:
       - ASPNETCORE_URLS=http://+:80
     container_name: K-Website
